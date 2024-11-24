@@ -85,7 +85,11 @@ int main(){
 }
 
 void yyerror(char *s){
-	printf("Error: %s\n",s);
+	if (strcmp(s, "parse error") == 0) {
+		printf("Error sintactico\n");			
+	} else {
+		printf("Error: %s\n",s);
+	}
 	exit(0);
 }
 
