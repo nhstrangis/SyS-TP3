@@ -85,7 +85,7 @@ int main(){
 }
 
 void yyerror(char *s){
-	printf("%s\n",s);
+	printf("Error: %s\n",s);
 	exit(0);
 }
 
@@ -134,7 +134,9 @@ void agregarSimbolo(char *idnt) {
 		if (strcmp("\0", tabla[i].identificador) == 0) {
 			strncpy(tabla[i].identificador, idnt, sizeof(tabla[i].identificador) - 1); 
 			tabla[i].clave = i+1;
+			return; 
 		}
 	}
-	return;
+	printf("Error: tabla de símbolos llena\n");
+    	exit(0);
 }
