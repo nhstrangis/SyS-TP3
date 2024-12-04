@@ -46,16 +46,31 @@ listaSentencias: sentencia
 
 sentencia: ID {
 	validarLongitudIdentificador(yytext, yyleng);
-	agregarSimbolo(yytext)
-} ASIGNACION expresion PUNTOYCOMA
-|LEER PARENIZQUIERDO listaIdentificadores PARENDERECHO PUNTOYCOMA
-|ESCRIBIR PARENIZQUIERDO listaExpresiones PARENDERECHO PUNTOYCOMA
+	agregarSimbolo(yytext);
+} asignacion
+|leer
+|escribir
 ;
 
-listaIdentificadores: ID {
-	validarLongitudIdentificador(yytext, yyleng);
-    agregarSimbolo(yytext);
-}
+asignacion:
+ASIGNACION expresion PUNTOYCOMA
+|PUNTOYCOMA  		{yyerror("Falta asignacion");}
+|ASIGNACION PUNTOYCOMA     {yyerror("Falta expresion");}
+|ASIGNACION expresion      {yyerror("Falta punto y coma");}
+
+leer:
+LEER PARENIZQUIERDO listaIdentificadores PARENDERECHO PUNTOYCOMA
+|LEER PARENIZQUIERDO listaIdentificadores PUNTOYCOMA		{yyerror("Faltan parentesis");}
+|LEER PARENIZQUIERDO PARENDERECHO PUNTOYCOMA			{yyerror("Faltan identificadores");}
+|LEER PARENIZQUIERDO listaIdentificadores PARENDERECHO		{yyerror("Falta punto y coma");}
+
+escribir:
+ESCRIBIR PARENIZQUIERDO listaExpresiones PARENDERECHO PUNTOYCOMA
+|ESCRIBIR PARENIZQUIERDO listaExpresiones PUNTOYCOMA		{yyerror("Faltan parentesis");}
+|ESCRIBIR PARENIZQUIERDO PARENDERECHO PUNTOYCOMA		{yyerror("Faltan expresiones");}
+|ESCRIBIR PARENIZQUIERDO listaExpresiones PARENDERECHO		{yyerror("Falta punto y coma");}
+
+listaIdentificadores: ID 
 |listaIdentificadores COMA ID
 ;
 
@@ -67,10 +82,7 @@ expresion: primaria
 |expresion operadorAditivo primaria
 ;
 
-primaria: ID {
-	validarLongitudIdentificador(yytext, yyleng);
-    agregarSimbolo(yytext);
-}
+primaria: ID
 |CONSTANTE {printf("El valor de la constante es %d\n",atoi(yytext));}
 |PARENIZQUIERDO expresion PARENDERECHO
 ;
@@ -88,7 +100,7 @@ void yyerror(char *s){
 	if (strcmp(s, "parse error") == 0) {
 		printf("Error sintactico\n");			
 	} else {
-		printf("Error: %s\n",s);
+		printf("Error sintactico: %s\n",s);
 	}
 	exit(0);
 }
